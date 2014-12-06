@@ -11,7 +11,7 @@ if (Meteor.isClient) {
     'playerId': function () {
       return this._id;
     },
-    'disablePoints': function () {
+    'disablePlayerActions': function () {
       return (typeof Session.get('selectedPlayer') !== 'string') ? 'disabled' : '';
     },
     'showSelectedPlayer': function () {
@@ -38,9 +38,28 @@ if (Meteor.isClient) {
     },
     'click .decrement': function () {
       PlayersList.update(Session.get('selectedPlayer'), {'$inc': {'score': -5}});
+    },
+    'click .removePlayer': function () {
+      var removePlayerConfirmation = window.confirm('Are you sure you want to remove the player?');
+
+      if (removePlayerConfirmation) {
+        PlayersList.remove(Session.get('selectedPlayer'));
+      } else {
+        window.alert('Removal cancelled.');
+      }
+
+      return;
     }
   });
-}
 
-if (Meteor.isServer) {
+  Template.addPlayerForm.events({
+    'submit form': function (ev) {
+      ev.preventDefault();
+      var playerName = ev.target.playerName.value,
+          playerScore = ev.target.playerScore.value;
+      PlayersList.insert({'name': playerName, 'score': playerScore});
+
+      ev.target.playerName.value = ev.target.playerScore.value = '';
+    }
+  });
 }
