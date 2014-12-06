@@ -10,6 +10,9 @@ if (Meteor.isClient) {
     },
     'playerId': function () {
       return this._id;
+    },
+    'disablePoints': function () {
+      return (typeof Session.get('selectedPlayer') !== 'string') ? 'disabled' : '';
     }
   });
 
@@ -17,10 +20,12 @@ if (Meteor.isClient) {
     'click .player': function () {
       Session.set('selectedPlayer', this._id);
     },
-    'click .pointsBtn': function () {
-      var player = PlayersList.find(this._id).fetch()[0];
-      PlayersList.update(this._id, {'name': player.name, 'score': player.score + 5});
+    'click .increment': function () {
+      PlayersList.update(Session.get('selectedPlayer'), {'$inc': {'score': 5}});
       return;
+    },
+    'click .decrement': function () {
+      PlayersList.update(Session.get('selectedPlayer'), {'$inc': {'score': -5}});
     }
   });
 }

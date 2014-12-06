@@ -14,8 +14,10 @@
             <li class="player {{selectedClass}}">
                 {{name}}: {{score}}
                 <br>
-                <button type="button" class="pointsBtn" id="{{playerId}}">Give 5 points</button>
             </li>
         {{/each}}
     </ul>
+    
+    <input class="increment" type="button" value="Give 5 points" {{disablePoints}}>
+    <input class="decrement" type="button" value="Take 5 points" {{disablePoints}}>
 </template>
