@@ -1,0 +1,21 @@
+<head>
+  <title>leaderboard</title>
+</head>
+
+<body>
+  <h1>Leaderboard</h1>
+
+  {{> leaderboard}}
+</body>
+
+<template name="leaderboard">
+    <ul>
+        {{#each players}}
+            <li class="player {{selectedClass}}">
+                {{name}}: {{score}}
+                <br>
+                <button type="button" class="pointsBtn" id="{{playerId}}">Give 5 points</button>
+            </li>
+        {{/each}}
+    </ul>
+</template>

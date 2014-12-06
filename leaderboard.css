@@ -1,0 +1,11 @@
+.selected {
+    background-color: yellow;
+}
+
+li {
+    padding: 6px;
+}
+
+button {
+    margin: 3px;
+}
