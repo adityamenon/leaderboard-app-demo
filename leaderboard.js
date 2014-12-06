@@ -14,9 +14,8 @@ if (Meteor.isClient) {
     'disablePoints': function () {
       return (typeof Session.get('selectedPlayer') !== 'string') ? 'disabled' : '';
     },
-    'selectedPlayerName': function () {
-      var player = PlayersList.find(Session.get('selectedPlayer')).fetch()[0];
-      if (player) return player.name;
+    'showSelectedPlayer': function () {
+      return PlayersList.findOne(Session.get('selectedPlayer'));
     }
   });
 
