@@ -3,7 +3,7 @@ PlayersList = new Mongo.Collection('players');
 if (Meteor.isClient) {
   Template.leaderboard.helpers({
     'players': function () {
-      return PlayersList.find();
+      return PlayersList.find({}, {'sort': {'score': -1, 'name': 1}});
     },
     'selectedClass': function () {
       return (Session.get('selectedPlayer') === this._id) ? 'selected' : '';
@@ -13,6 +13,10 @@ if (Meteor.isClient) {
     },
     'disablePoints': function () {
       return (typeof Session.get('selectedPlayer') !== 'string') ? 'disabled' : '';
+    },
+    'selectedPlayerName': function () {
+      var player = PlayersList.find(Session.get('selectedPlayer')).fetch()[0];
+      if (player) return player.name;
     }
   });
 
