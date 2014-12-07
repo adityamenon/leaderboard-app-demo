@@ -1,18 +1,4 @@
-<head>
-  <title>leaderboard</title>
-</head>
-
-<body>
-  <h1>Leaderboard</h1>
-
-  {{> loginButtons}}
-
-  {{> leaderboard}}
-
-  {{> addPlayerForm}}
-</body>
-
-<template name="leaderboard">
+<template name="mainDisplay">
     <ul>
         {{#each players}}
             <li class="player {{selectedClass}}">
@@ -29,15 +15,5 @@
         <input class="removePlayer" type="button" value="Remove Player" {{disablePlayerActions}}>
     </p>
     <p>Selected player: <strong>{{showSelectedPlayer.name}}</strong></p>
-    {{/if}}
-</template>
-
-<template name="addPlayerForm">
-    {{#if currentUser}}
-    <form>
-        <input type="text" name="playerName">
-        <input type="text" name="playerScore">
-        <input type="submit" value="Add Player">
-    </form>
     {{/if}}
 </template>
