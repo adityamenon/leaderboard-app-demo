@@ -1,9 +1,11 @@
 PlayersList = new Mongo.Collection('players');
 
 if (Meteor.isClient) {
+  Meteor.subscribe('thePlayers');
+
   Template.leaderboard.helpers({
     'players': function () {
-      return PlayersList.find({'createdBy': Meteor.userId()}, {'sort': {'score': -1, 'name': 1}});
+      return PlayersList.find({}, {'sort': {'score': -1, 'name': 1}}).fetch();
     },
     'selectedClass': function () {
       return (Session.get('selectedPlayer') === this._id) ? 'selected' : '';
@@ -33,17 +35,18 @@ if (Meteor.isClient) {
       return;
     },
     'click .increment': function () {
-      PlayersList.update(Session.get('selectedPlayer'), {'$inc': {'score': 5}});
+      Meteor.call('updatePlayerScore', Session.get('selectedPlayer'), 5)
       return;
     },
     'click .decrement': function () {
-      PlayersList.update(Session.get('selectedPlayer'), {'$inc': {'score': -5}});
+      Meteor.call('updatePlayerScore', Session.get('selectedPlayer'), -5)
+      return;
     },
     'click .removePlayer': function () {
       var removePlayerConfirmation = window.confirm('Are you sure you want to remove the player?');
 
       if (removePlayerConfirmation) {
-        PlayersList.remove(Session.get('selectedPlayer'));
+        Meteor.call('removePlayerData', Session.get('selectedPlayer'));
       } else {
         window.alert('Removal cancelled.');
       }
@@ -55,15 +58,38 @@ if (Meteor.isClient) {
   Template.addPlayerForm.events({
     'submit form': function (ev) {
       ev.preventDefault();
+
       var playerName = ev.target.playerName.value,
           playerScore = ev.target.playerScore.value;
-      PlayersList.insert({
-        'name': playerName,
-        'score': playerScore,
-        'createdBy': Meteor.userId()
-      });
 
       ev.target.playerName.value = ev.target.playerScore.value = '';
+
+      return Meteor.call('insertPlayerData', {
+        'name': playerName,
+        'score': parseInt(playerScore)
+      });
+    }
+  });
+}
+
+if (Meteor.isServer) {
+  Meteor.publish('thePlayers', function () {
+    return PlayersList.find({'createdBy': this.userId});
+  });
+
+  Meteor.methods({
+    'insertPlayerData': function (player) {
+      return PlayersList.insert({
+        'name': player.name,
+        'score': player.score,
+        'createdBy': Meteor.userId()
+      });
+    },
+    'removePlayerData': function (playerId) {
+      return PlayersList.remove(playerId);
+    },
+    'updatePlayerScore': function (playerId, score) {
+      return PlayersList.update(playerId, {'$inc': {'score': parseInt(score)}});
     }
   });
 }
